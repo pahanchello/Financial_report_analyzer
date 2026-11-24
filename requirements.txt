@@ -1,0 +1,23 @@
+# HTML Processing
+beautifulsoup4==4.12.2
+lxml==4.9.3
+html5lib==1.1
+
+# PDF Processing
+PyMuPDF==1.23.8
+camelot-py==0.11.0
+opencv-python==4.8.1.78
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.2
+
+# LLM & Embeddings
+ollama==0.4.0
+
+# Vector DB
+qdrant-client==1.7.0
+
+# Utilities
+python-dotenv==1.0.0
+tqdm==4.66.1

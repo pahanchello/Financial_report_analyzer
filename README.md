@@ -14,42 +14,49 @@ If the retrieved context does not contain the answer, the model is instructed to
 
 ## Pipeline
 SEC EDGAR (HTML) → Parser → Sections → Chunker → Embeddings → Qdrant → Retriever → LLM → Answer + citations
-## Tech stack
 
-| Layer | Tool |
-|---|---|
-| LLM & embeddings | Ollama (`qwen2.5:7b-instruct-q4_K_M`, `nomic-embed-text`) |
-| Vector database | Qdrant (Docker) |
-| Parsing | BeautifulSoup4 + lxml |
-| Language | Python 3.10+ |
+## 🛠 Tech Stack
 
-Runs on modest hardware: ~4.5 GB VRAM for the LLM, ~270 MB for embeddings (tested on 8 GB VRAM / 8 GB RAM).
+| Component | Technology |
+|-----------|-----------|
+| LLM | `Qwen2.5-7B-Instruct-Q4_K_M` (Ollama) |
+| Embeddings | `nomic-embed-text` (768 dimensions) |
+| Vector DB | `Qdrant` (Docker) |
+| Parsing | `BeautifulSoup4`, `lxml` |
+| Backend | Python 3.10+ |
 
-## Dataset
+## 📚 Dataset
 
-Real 10-K filings downloaded from [SEC EDGAR](https://www.sec.gov/edgar), split into semantic sections (Item 1 Business, Item 1A Risk Factors, Item 7 MD&A, Item 8 Financial Statements, etc.):
+Real SEC 10-K annual reports from [SEC EDGAR](https://www.sec.gov/edgar):
 
-| Company | Ticker | Fiscal year | Sections | Chunks |
-|---|---|---|---|---|
-| Apple | AAPL | 2026 | 11 | 181 |
-| Alphabet | GOOGL | 2025 | 11 | 271 |
-| Microsoft | MSFT | 2024 | 11 | 259 |
-| **Total** | | | **33** | **711** |
+| Company | Ticker | Fiscal Year | Chunks |
+|---------|--------|-------------|--------|
+| Apple Inc. | AAPL | 2026 | 181 |
+| Alphabet Inc. | GOOGL | 2025 | 271 |
+| Microsoft Corp. | MSFT | 2024 | 259 |
+| **Total** | | | **711** |
 
-Each chunk is ~1500 characters with 200-character overlap and carries metadata: `ticker`, `fiscal_year`, `period_end`, `item_id`, `section_title`, `chunk_index`.
+## 🚀 Installation
 
-## Installation
-bash
+### Prerequisites
+- Python 3.10+, Docker, Ollama ([download](https://ollama.com/download))
+- 8GB+ RAM, 8GB+ VRAM
+
+### Setup
+
+```bash
 git clone https://github.com/yourusername/financial-report-analyzer.git
 cd financial-report-analyzer
+
 python -m venv venv
-venv\Scripts\activate # Windows
-source venv/bin/activate # Linux / macOS
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
 cp .env.example .env
+
+# Install Ollama models
 ollama pull nomic-embed-text
 ollama pull qwen2.5:7b-instruct-q4_K_M
-docker run -d -p 6333:6333 -p 6334:6334
--v qdrant_storage:/qdrant/storage --name qdrant qdrant/qdrant
-**Requirements:** Python 3.10+, Docker, [Ollama](https://ollama.com/download).
 
+# Start Qdrant
+docker run -d -p 6333:6333 -p 6334:6334 -v qdrant_storage:/qdrant/storage --name qdrant qdrant/qdrant
